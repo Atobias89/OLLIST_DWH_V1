@@ -4,4 +4,5 @@ dbt_packages/
 logs/
 notes.txt
 loatEnv.py
-
+pr_key
+pr_key.pub

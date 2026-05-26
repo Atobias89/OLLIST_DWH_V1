@@ -1,3 +1,6 @@
 packages:
   - package: dbt-labs/dbt_utils
     version: 1.3.3
+
+  - git: https://github.com/Atobias89/OLLIST_DWH_V1.git
+    revision: master
