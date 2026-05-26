@@ -1,0 +1,57 @@
+version: 2
+
+models:
+  - name: stg_product
+    columns:
+      - name: product_id       
+        contraints:
+          - type: primary_key
+        tests:
+          - not_null
+      - name: product_category_name
+        tests:
+          - not_null
+  - name: stg_orders_items
+    columns : 
+      - name: order_id
+        contraints:
+          - type : primary_key
+      - name: product_id
+        contraints:
+          - type: foreign_key            
+            to : ref('stg_product')
+            to_columns: [product_id]
+      - name: seller_id
+      - name: price
+      - name : shipping_limit_date
+  - name: stg_orders
+    columns :
+      - name: order_id
+        contraints:
+          - type : primary_key
+      - name: costumer_id 
+      - name: order_status
+      - name: order_purchase_timestamp
+  - name: stg_customers
+    columns:
+      - name: customer_unique_id
+        constraint:
+          - type: primary_key
+      - name: customer_zip_code_prefix
+      - name: customer_id
+  - name: stg_sellers
+    columns:
+      - name: seller_id
+        constraint: 
+          - type: primary_key
+      - name: seller_zip_code_prefix
+  - name: stg_geolocation
+    columns:
+      - name : geolocation_zip_code_prefix
+        constraint:
+          - type: primary_key
+      - name: geolocation_lat
+      - name: geolocation_lng
+      - name: geolocation_city
+      - name: geolocation_state
+   

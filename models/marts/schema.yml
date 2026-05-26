@@ -1,0 +1,287 @@
+Version: 2
+
+models:
+  - name : dim_products
+    config : 
+      contract : 
+        enforced : true
+    columns:
+      - name : id_dim_product 
+        data_type : text
+        constraints: 
+          - type : primary_key
+        data_tests:
+          - unique
+          - not_null        
+      - name : product_id
+        data_type : text
+        data_tests:
+          - unique
+          - not_null
+      - name : product_category_name        
+        data_type : text
+        data_tests : 
+          - not_null
+      - name : product_weight_g
+        data_type : int
+      - name : product_length_cm
+        data_type : int
+      - name : product_height_cm
+        data_type : int
+      - name : product_width_cm
+        data_type : int
+      - name : created_at
+        data_type : date
+      - name : updated_at
+        data_type : date  
+      
+  - name : dim_order_detail
+    config : 
+      contract : 
+        enforced : true
+    columns:
+      - name : id_dim_order_detail 
+        data_type : text        
+        constraints: 
+          - type : primary_key
+        data_tests:
+          - unique
+          - not_null
+      - name : order_id
+        data_type : text
+        data_tests:        
+          - not_null
+      # - name : order_date
+      #   data_type : text
+      #   constraints :
+      #     - type : foreign_key
+      #       to : ref('dim_dates')
+      #       columns: [id_date]
+      - name : purchase_time
+        data_type : text
+      - name : order_status
+        data_type : text
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['shipped','unavailable','invoiced','created','approved','processing','delivered','canceled']
+      - name: payment_type
+        data_type: text
+      - name : payment_value
+        data_type : float
+      - name : created_at
+        data_type : date
+      - name : updated_at
+        data_type : date
+      # - name : total_order_value
+      #   data_type : float
+
+  - name : dim_geolocations
+    config : 
+      contract : 
+        enforced: true
+    columns :
+      - name : zip_code_prefix_id
+        data_type : text
+        constraints :
+          - type : primary_key
+        data_tests:
+          - unique
+          - not_null
+      - name : geolocation_zip_code_prefix
+        data_type : int 
+      - name : geolocation_lat  
+        data_type : float
+      - name : geolocation_lng
+        data_type : float      
+      - name : geolocation_city  
+        data_type : text
+      - name : geolocation_state 
+        data_type : text
+      - name : created_at
+        data_type : date
+      - name : updated_at
+        data_type : date
+
+  - name : dim_customers
+    config : 
+      contract :
+        enforced : true          
+    columns :
+      - name : id_dim_customers
+        data_type : text
+        constraints : 
+          - type : primary_key  
+        data_tests:
+          - unique
+          - not_null        
+      - name : customer_unique_id      
+        data_type : text
+        data_tests:
+          - not_null       
+      - name : zip_code_prefix_id
+        data_type : text
+        data_tests:
+          - not_null
+        constraints : 
+          - type : foreign_key
+            to : ref('dim_geolocations')
+            to_columns : [zip_code_prefix_id]      
+      - name : customer_id 
+        data_type : text
+      - name : created_at
+        data_type : date
+      - name : updated_at
+        data_type : date
+
+
+
+  - name : dim_sellers
+    config : 
+      contract : 
+        enforced: true
+    columns : 
+      - name : id_dim_sellers        
+        data_type : text
+        constraints : 
+          - type : primary_key
+        data_tests:
+          - unique
+          - not_null
+      - name : seller_id
+        data_type : text
+        data_tests:
+          - unique
+          - not_null
+      - name : seller_city 
+        data_type : text
+      - name : seller_state
+        data_type : text
+      - name : created_at
+        data_type : date
+      - name : updated_at
+        data_type : date
+
+  - name : dim_dates
+    config : 
+      contract : 
+        enforced: true
+    columns : 
+      - name : ID_DATE       
+        data_type : text
+        constraints : 
+          - type : primary_key
+        data_tests:
+          - unique
+          - not_null
+      - name : DATE
+        data_type : timestamp
+        data_tests: 
+          - not_null
+      - name : ANNEE
+        data_type : Integer
+      - name : ESTBISSEXTILE
+        data_type : text
+      - name : SEMESTRE
+        data_type : Integer
+      - name : TRIMESTRE
+        data_type : Integer
+      - name : MOIS
+        data_type : Integer
+      - name : JOUR
+        data_type : Integer
+      - name : NOMBREJOURANNEE
+        data_type : Integer
+      - name : NOMBREJOURSEMAINE
+        data_type : Integer
+      - name : JOURSEMAINE
+        data_type : text           
+
+  - name : fact_orders
+    config : 
+      contract : 
+        enforced : true
+    constraints : 
+      - type : primary_key
+        columns : [id_dim_order_detail,id_dim_product, id_dim_customers, id_dim_sellers,ID_DATE]
+    columns :
+      - name : id_dim_order_detail
+        data_type : text
+        constraints : 
+          - type : foreign_key
+            to : ref('dim_order_detail')
+            to_columns : [id_dim_order_detail]
+        data_tests : 
+          - relationships :
+              arguments:
+               to : ref('dim_order_detail')
+              field : id_dim_order_detail
+      - name : id_dim_product
+        data_type : text
+        constraints : 
+          - type : foreign_key
+            to : ref('dim_products')
+            to_columns : [id_dim_product]
+      
+      - name : id_dim_customers
+        data_type : text
+        constraints :
+          - type : foreign_key
+            to : ref('dim_customers')
+            to_columns : [id_dim_customers] 
+        data_tests :
+          - relationships :  
+              arguments:
+                to :  ref('dim_customers')
+                field : id_dim_customers 
+      
+      - name : id_dim_sellers
+        data_type : text
+        constraints : 
+          - type : foreign_key
+            to : ref('dim_sellers')
+            to_columns : [id_dim_sellers]
+        data_tests :
+          - relationships : 
+              arguments :
+                to : ref('dim_sellers')
+                field : id_dim_sellers
+      - name : ID_DATE
+        data_type : text
+        constraints : 
+          - type : foreign_key
+            to : ref('dim_dates')
+            to_columns : [ID_DATE]
+        data_tests :
+          - relationships : 
+              arguments :
+                to : ref('dim_dates')
+                field : ID_DATE
+      # - name : order_date
+      # - name : order_status
+      - name : purchase_number
+        data_type: Integer
+      - name : total_order_value
+        data_type: float
+      - name : created_at
+        data_type : date
+      - name : updated_at
+        data_type : date
+     
+
+
+  # - name : fact_rfm
+  #   columns : 
+  #     - name : id_dim_costumers
+  #       constraints :
+  #         - type : foreign_key
+  #           to : ref('dim_customers')
+  #           to_columns : [id_dim_costumers]
+  #     - name : recency
+  #     - name : frequency
+  #     - name : monetary
+  #     - name : f_score
+  #     - name : m_score
+  #     - name : rfm_score
+  #     - name : customer_segment 
+  
