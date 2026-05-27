@@ -15,6 +15,7 @@ jobs:
 
     services:
       postgres:
+<<<<<<< HEAD
         image: postgres:16
         env:
             POSTGRES_USER: test_user
@@ -27,6 +28,8 @@ jobs:
             --health-retries 5
         ports:
             - 5432:5432
+=======
+
    
     steps:
       - name: Récupérer le code
@@ -34,7 +37,11 @@ jobs:
 
       - name: installer python
         uses: actions/setup-python@v5
+<<<<<<< HEAD
         with:
+=======
+  
+>>>>>>> 29f0b601fcd4bd68838df35ad494abe718f66a2f
           python-version: '3.11'
 
       - name: installer dbt
