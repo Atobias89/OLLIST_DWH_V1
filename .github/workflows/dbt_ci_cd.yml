@@ -1,0 +1,128 @@
+
+name: run dbt with SSH 
+
+on:
+  push:
+    branches: [ "master","recette" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  test_dbt:
+    name: Tester les modèles dbt
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+      image: postgres:16
+      env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+      options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      ports:
+          - 5432:5432
+   
+    steps:
+      - name: Récupérer le code
+        uses: actions/checkout@v4
+
+      - name: installer python
+        uses: actions/setup-python@v5
+        wtih:
+          python-version: '3.11'
+
+      - name: installer dbt
+        run : |
+          pip install dbt-core dbt-postgres
+          dbt --version
+
+      - name: Installer les dépendances dbt
+        run: |
+          if [ -f packages.yml ]; then
+            dbt deps
+          fi
+      
+      - name: Debug - Vérifier les fichiers
+        run: |
+          echo " Structure du projet :"
+          ls -la
+          echo " Vérification de profiles.yml :"
+          cat profiles.yml 2>/dev/null || echo "profiles.yml non trouvé"
+          echo " Recherche des fichiers schema.yml :"
+          find . -name "schema.yml" -type f | head -5
+      
+      - name: compiler les modèles 
+        run : dbt compile --profile-dir ./
+        env:
+          DBT_POSTGRESQL_HOST: localhost
+          DBT_POSTGRESQL_USER: test_user
+          DBT_POSTGRESQL_PASSWORD: test_password
+          DBT_POSTGRESQL_PORT: 5432
+          DBT_POSTGRESQL_DBNAME: test_db
+          DBT_POSTGRESQL_SCHEMA: dbt_test_ci  
+      
+      - name: Exécuter les modèles dbt
+        run: dbt run --profiles-dir ./
+        env:
+          DBT_POSTGRESQL_HOST: localhost
+          DBT_POSTGRESQL_USER: test_user
+          DBT_POSTGRESQL_PASSWORD: test_password
+          DBT_POSTGRESQL_PORT: 5432
+          DBT_POSTGRESQL_DBNAME: test_db
+          DBT_POSTGRESQL_SCHEMA: dbt_test_ci
+
+      - name: Tester les données (utilise les tests dans schema.yml)
+        run: dbt test --profiles-dir ./
+        env:
+          DBT_POSTGRESQL_HOST: localhost
+          DBT_POSTGRESQL_USER: test_user
+          DBT_POSTGRESQL_PASSWORD: test_password
+          DBT_POSTGRESQL_PORT: 5432
+          DBT_POSTGRESQL_DBNAME: test_db
+          DBT_POSTGRESQL_SCHEMA: dbt_test_ci
+      
+      - name: Afficher les tables créées (debug)
+        run: |
+          PGPASSWORD=test_password psql -h localhost -U test_user -d test_db -c "\dt dbt_test_ci.*"
+        env:
+          PGPASSWORD: test_password
+    
+    generate_docs:
+    name: Générer la documentation
+    runs-on: ubuntu-latest
+    needs: test_dbt
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Installer Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Installer dbt
+        run: pip install dbt-core dbt-postgres
+      
+      - name: Générer la documentation
+        run: dbt docs generate --profiles-dir ./
+        env:
+          DBT_POSTGRESQL_HOST: localhost
+          DBT_POSTGRESQL_USER: test_user
+          DBT_POSTGRESQL_PASSWORD: test_password
+          DBT_POSTGRESQL_PORT: 5432
+          DBT_POSTGRESQL_DBNAME: test_db
+          DBT_POSTGRESQL_SCHEMA: dbt_test_ci
+      
+      - name: Uploader la documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: dbt-docs
+          path: target/
+
