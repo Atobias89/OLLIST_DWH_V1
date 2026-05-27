@@ -65,7 +65,7 @@ jobs:
           DB_PASSWORD: test_password
           DB_PORT: 5432
           DB_NAME: test_db
-          DB_SCHEMA: dbt_test_ci  
+          DB_SCHEMA: ollistDBT  
   
       - name: Inserer les csv dans db
         run: dbt seed
@@ -75,7 +75,7 @@ jobs:
           DB_PASSWORD: test_password
           DB_PORT: 5432
           DB_NAME: test_db
-          DB_SCHEMA: dbt_test_ci
+          DB_SCHEMA: ollistDBT
       
       - name: Exécuter les modèles dbt
         run: dbt run --profiles-dir .
@@ -85,7 +85,7 @@ jobs:
           DB_PASSWORD: test_password
           DB_PORT: 5432
           DB_NAME: test_db
-          DB_SCHEMA: dbt_test_ci 
+          DB_SCHEMA: ollistDBT 
 
       - name: Tester les données (utilise les tests dans schema.yml)
         run: dbt test --profiles-dir .
@@ -95,7 +95,7 @@ jobs:
           DB_PASSWORD: test_password
           DB_PORT: 5432
           DB_NAME: test_db
-          DB_SCHEMA: dbt_test_ci 
+          DB_SCHEMA: ollistDBT
       
       - name: Afficher les tables créées (debug)
         run: |
