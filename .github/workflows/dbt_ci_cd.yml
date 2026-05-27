@@ -58,7 +58,7 @@ jobs:
           cat profiles.yml 2>/dev/null || echo "profiles.yml non trouvé"
       
       - name: compiler les modèles 
-        run : dbt compile --profile-dir ./
+        run : dbt compile --profile-dir .
         env:
           DBT_POSTGRESQL_HOST: localhost
           DBT_POSTGRESQL_USER: test_user
@@ -68,7 +68,7 @@ jobs:
           DBT_POSTGRESQL_SCHEMA: dbt_test_ci  
       
       - name: Exécuter les modèles dbt
-        run: dbt run --profiles-dir ./
+        run: dbt run --profiles-dir .
         env:
           DBT_POSTGRESQL_HOST: localhost
           DBT_POSTGRESQL_USER: test_user
@@ -78,7 +78,7 @@ jobs:
           DBT_POSTGRESQL_SCHEMA: dbt_test_ci
 
       - name: Tester les données (utilise les tests dans schema.yml)
-        run: dbt test --profiles-dir ./
+        run: dbt test --profiles-dir .
         env:
           DBT_POSTGRESQL_HOST: localhost
           DBT_POSTGRESQL_USER: test_user
@@ -111,7 +111,7 @@ jobs:
         run: pip install dbt-core dbt-postgres
       
       - name: Générer la documentation
-        run: dbt docs generate --profiles-dir ./
+        run: dbt docs generate --profiles-dir .
         env:
           DBT_POSTGRESQL_HOST: localhost
           DBT_POSTGRESQL_USER: test_user
