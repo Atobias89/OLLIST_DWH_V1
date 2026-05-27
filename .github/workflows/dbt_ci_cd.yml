@@ -58,7 +58,7 @@ jobs:
           cat profiles.yml 2>/dev/null || echo "profiles.yml non trouvé"
       
       - name: compiler les modèles 
-        run : dbt compile --profile-dir .
+        run : dbt compile --profiles-dir .
         env:
           DBT_POSTGRESQL_HOST: localhost
           DBT_POSTGRESQL_USER: test_user
