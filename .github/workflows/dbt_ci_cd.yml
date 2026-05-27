@@ -80,7 +80,6 @@ jobs:
       - name: Tester les données (utilise les tests dans schema.yml)
         run: dbt test --profiles-dir .
         env:
-        env:
           DB_HOST: localhost
           DB_USER: test_user
           DB_PASSWORD: test_password
@@ -113,7 +112,6 @@ jobs:
       
       - name: Générer la documentation
         run: dbt docs generate --profiles-dir .
-        env:
         env:
           DB_HOST: localhost
           DB_USER: test_user
