@@ -1,8 +1,7 @@
 version: 2
 
 sources:
-  - name: olt
-    database: postgres
+  - name: olt  
     schema: ollistDBT
     tables:
       - name: olist_customers_dataset     
