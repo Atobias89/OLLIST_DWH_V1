@@ -27,6 +27,8 @@ jobs:
             --health-retries 5
         ports:
             - 5432:5432
+
+
    
     steps:
       - name: Récupérer le code
@@ -34,14 +36,22 @@ jobs:
 
       - name: installer python
         uses: actions/setup-python@v5
+
         with:
+
           python-version: '3.11'
 
       - name: installer dbt
         run : |
           pip install dbt-core dbt-postgres
           dbt --version
-
+      
+      - name: Installer les dependances dbt
+        run: |
+          if [ -f packages.yml ]; then
+            dbt deps
+          fi
+          
       - name: Debug - verfier les fichiers 
         run : |
           echo " Structure projet :"
