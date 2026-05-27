@@ -16,6 +16,6 @@ With order_detail As (
 )
 
 select 
-   {{dbt_utils.generate_surrogate_key(['product_id'])}} as id_dim_product,
+   {{dbt_utils.generate_surrogate_key(['product_id','product_category_name'])}} as id_dim_product,
    * 
 from order_detail
