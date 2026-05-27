@@ -66,6 +66,16 @@ jobs:
           DB_PORT: 5432
           DB_NAME: test_db
           DB_SCHEMA: dbt_test_ci  
+  
+      - name: Inserer les csv dans db
+        run: dbt seed
+        env:
+          DB_HOST: localhost
+          DB_USER: test_user
+          DB_PASSWORD: test_password
+          DB_PORT: 5432
+          DB_NAME: test_db
+          DB_SCHEMA: dbt_test_ci
       
       - name: Exécuter les modèles dbt
         run: dbt run --profiles-dir .
