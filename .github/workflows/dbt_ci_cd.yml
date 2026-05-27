@@ -28,7 +28,6 @@ jobs:
         ports:
             - 5432:5432
 
-
    
     steps:
       - name: Récupérer le code
@@ -38,7 +37,6 @@ jobs:
         uses: actions/setup-python@v5
 
         with:
-
           python-version: '3.11'
 
       - name: installer dbt
@@ -51,7 +49,7 @@ jobs:
           if [ -f packages.yml ]; then
             dbt deps
           fi
-          
+
       - name: Debug - verfier les fichiers 
         run : |
           echo " Structure projet :"
@@ -95,7 +93,7 @@ jobs:
         env:
           PGPASSWORD: test_password
     
-    generate_docs:
+  generate_docs:
     name: Générer la documentation
     runs-on: ubuntu-latest
     needs: test_dbt
