@@ -25,7 +25,7 @@ with products as (
 )
 
 select
-        {{dbt_utils.generate_surrogate_key(['product_id'])}} as id_dim_product,
+        {{dbt_utils.generate_surrogate_key(['product_id','product_category_name'])}} as id_dim_product,
         product_id, 
         product_category_name,
         product_weight_g,

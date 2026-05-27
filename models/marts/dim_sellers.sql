@@ -45,7 +45,7 @@ WITH sellers AS (
 )
 
 select distinct
-    {{dbt_utils.generate_surrogate_key(['seller_id'])}} as id_dim_sellers,
+    {{dbt_utils.generate_surrogate_key(['seller_id','seller_city'])}} as id_dim_sellers,
      seller_id,     
      seller_city ,
      seller_state,

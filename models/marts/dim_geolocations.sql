@@ -22,7 +22,7 @@ WITH geolocation AS (
 )
 
 SELECT
-    {{dbt_utils.generate_surrogate_key(['geolocation_zip_code_prefix'])}} as zip_code_prefix_id,
+    {{dbt_utils.generate_surrogate_key(['geolocation_zip_code_prefix','geolocation_city'])}} as zip_code_prefix_id,
         geolocation_zip_code_prefix,
         geolocation_lat,
         geolocation_lng,
